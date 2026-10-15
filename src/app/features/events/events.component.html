@@ -1,0 +1,122 @@
+<section class="events-page">
+  @if (eventId(); as id) {
+    @if (selectedEvent(); as event) {
+      <div class="detail-heading">
+        <div>
+          <a class="back-link" routerLink="/events">← All events</a>
+          <span class="event-detail-eyebrow">EVENT DETAILS</span>
+          <div class="event-title-row"><h1>{{ event.title }}</h1><span class="event-status" [class]="'event-status ' + eventStatus(event).toLowerCase()">{{ eventStatus(event) }}</span></div>
+          <p>{{ event.description }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="secondary-action" type="button" (click)="openEditForm(event)">Edit event</button>
+          <button class="danger-action" type="button" (click)="pendingDelete.set(event)">Delete</button>
+        </div>
+      </div>
+
+      <div class="event-overview-grid">
+        <div class="event-overview-card"><span class="overview-icon date"><ng-icon name="lucideCalendarDays" size="17" /></span><span><small>DATE & TIME</small><strong>{{ formatDate(event.startsAt) }}</strong><em>{{ formatTime(event.startsAt) }} – {{ formatTime(event.endsAt) }}</em></span></div>
+        <div class="event-overview-card"><span class="overview-icon place"><ng-icon name="lucideMapPin" size="17" /></span><span><small>VENUE</small><strong>{{ event.venue }}</strong><em>Community gathering</em></span></div>
+        <div class="event-overview-card"><span class="overview-icon people"><ng-icon name="lucideUsers" size="17" /></span><span><small>REGISTRATIONS</small><strong>{{ event.registeredMemberIds.length }} <i>of {{ event.capacity }}</i></strong><em>{{ capacityPercent(event) }}% of event capacity</em></span></div>
+        <div class="event-overview-card"><span class="overview-icon attendance"><ng-icon name="lucideCheck" size="17" /></span><span><small>ATTENDANCE</small><strong>{{ event.attendedMemberIds.length }} <i>attended</i></strong><em>{{ attendancePercent(event) }}% attendance rate</em></span></div>
+      </div>
+
+      <section class="attendees-panel">
+        <div class="attendees-heading">
+          <div><h2>Attendees <span>{{ event.registeredMemberIds.length }}</span></h2><p>Register members and record who attended.</p></div>
+          <div class="register-controls">
+            <label class="visually-hidden" for="member-to-register">Choose a member</label>
+            <select id="member-to-register" [value]="selectedMemberId()" (change)="selectMember($event)">
+              <option value="">Select a member</option>
+              @for (member of availableMembers(); track member.id) { <option [value]="member.id">{{ member.fullName }}</option> }
+            </select>
+            <button class="primary-action" type="button" [disabled]="!selectedMemberId() || availableMembers().length === 0" (click)="registerMember()">Register member</button>
+          </div>
+        </div>
+        @if (eventAttendees().length) {
+          <div class="attendee-table-wrap">
+            <table class="attendee-table">
+              <thead><tr><th>MEMBER</th><th>COMMUNITY GROUP</th><th>REGISTRATION STATUS</th><th>ATTENDANCE</th></tr></thead>
+              <tbody>
+                @for (attendee of eventAttendees(); track attendee.member.id) {
+                  <tr>
+                    <td><span class="attendee-identity"><span class="attendee-avatar">{{ attendee.member.fullName.split(' ').map((part) => part.charAt(0)).slice(0, 2).join('') }}</span><span><strong>{{ attendee.member.fullName }}</strong><small>{{ attendee.member.email }}</small></span></span></td>
+                    <td>{{ attendee.member.group }}</td>
+                    <td><span class="registered-tag">Registered</span></td>
+                    <td>
+                      @if (eventStatus(event) !== 'Upcoming') {
+                        <label class="attendance-toggle"><input type="checkbox" [checked]="attendee.attended" (change)="updateAttendanceFromInput($event, attendee.member)" /><span></span><small>{{ attendee.attended ? 'Attended' : 'Not yet' }}</small></label>
+                      } @else {
+                        <span class="not-started">Not started</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="attendees-empty"><span class="empty-icon"><ng-icon name="lucideUsers" size="20" /></span><strong>No members registered yet</strong><p>Choose an active member above to add them to this event.</p></div>
+        }
+      </section>
+    } @else {
+      <section class="not-found">
+        <span class="empty-icon"><ng-icon name="lucideCalendarDays" size="21" /></span>
+        <h1>Event not found</h1>
+        <p>This event may have been removed or the link may be incorrect.</p>
+        <a class="primary-action" routerLink="/events">Back to events</a>
+      </section>
+    }
+  } @else {
+    <div class="page-heading">
+      <div><span class="eyebrow">COMMUNITY CALENDAR</span><h1>Events</h1><p>Bring people together and keep track of every gathering.</p></div>
+      <button class="primary-action" type="button" (click)="openCreateForm()"><span aria-hidden="true">+</span> Create event</button>
+    </div>
+
+    <div class="event-summary-grid">
+      <button class="summary-card" [class.selected]="statusFilter() === 'All'" type="button" (click)="setStatusFilter('All')"><span class="summary-bullet all"><ng-icon name="lucideCalendarDays" size="17" /></span><span><strong>{{ community.events().length }}</strong><small>All events</small></span></button>
+      <button class="summary-card" [class.selected]="statusFilter() === 'Upcoming'" type="button" (click)="setStatusFilter('Upcoming')"><span class="summary-bullet upcoming"></span><span><strong>{{ upcomingCount() }}</strong><small>Upcoming</small></span></button>
+      <button class="summary-card" [class.selected]="statusFilter() === 'Ongoing'" type="button" (click)="setStatusFilter('Ongoing')"><span class="summary-bullet ongoing"></span><span><strong>{{ ongoingCount() }}</strong><small>Ongoing</small></span></button>
+      <button class="summary-card" [class.selected]="statusFilter() === 'Completed'" type="button" (click)="setStatusFilter('Completed')"><span class="summary-bullet completed"></span><span><strong>{{ completedCount() }}</strong><small>Completed</small></span></button>
+    </div>
+
+    <section class="events-panel">
+      <div class="list-heading">
+        <div><h2>Community events <span>{{ filteredEvents().length }}</span></h2><p>Plan activities, track registrations, and record attendance.</p></div>
+        <label class="event-search"><ng-icon name="lucideSearch" size="16" /><input type="search" placeholder="Search events or venues..." aria-label="Search events or venues" [value]="searchTerm()" (input)="setSearch($event)" /></label>
+      </div>
+      @if (filteredEvents().length) {
+        <div class="event-cards">
+          @for (event of filteredEvents(); track event.id) {
+            <article class="event-card">
+              <div class="event-card-date"><strong>{{ formatDate(event.startsAt).split(' ')[0] }}</strong><small>{{ formatDate(event.startsAt).split(' ')[1] }}</small><span>{{ formatDate(event.startsAt).split(' ')[2] }}</span></div>
+              <div class="event-card-content">
+                <div class="event-card-title"><a [routerLink]="['/events', event.id]">{{ event.title }}</a><span class="event-status" [class]="'event-status ' + eventStatus(event).toLowerCase()">{{ eventStatus(event) }}</span></div>
+                <p>{{ event.description }}</p>
+                <div class="event-card-meta"><span><ng-icon name="lucideClock3" size="13" /> {{ formatTime(event.startsAt) }}</span><span><ng-icon name="lucideMapPin" size="13" /> {{ event.venue }}</span></div>
+                <div class="capacity-info"><span>Registrations <strong>{{ event.registeredMemberIds.length }} / {{ event.capacity }}</strong></span><span class="capacity-bar"><span [style.width.%]="capacityPercent(event)"></span></span></div>
+              </div>
+              <div class="event-card-actions">
+                <button type="button" (click)="openEditForm(event)">Edit</button>
+                <button class="danger-action" type="button" (click)="pendingDelete.set(event)">Delete</button>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="events-empty"><span class="empty-icon"><ng-icon name="lucideCalendarDays" size="21" /></span><strong>{{ community.events().length ? 'No events match your search' : 'Your calendar is ready' }}</strong><p>{{ community.events().length ? 'Try another title, venue, or event status.' : 'Create your first event and invite members to take part.' }}</p>@if (!community.events().length) { <button class="primary-action" type="button" (click)="openCreateForm()">Create an event</button> }</div>
+      }
+    </section>
+  }
+
+  @if (formOpen()) { <app-event-form-dialog [event]="editingEvent()" (saved)="saveEvent($event)" (cancelled)="closeForm()" /> }
+  <app-confirm-dialog
+    [open]="pendingDelete() !== null"
+    title="Delete this event?"
+    [message]="pendingDelete()?.title + ' and its attendance records will be permanently removed.'"
+    confirmLabel="Delete event"
+    [destructive]="true"
+    (confirmed)="deleteEvent()"
+    (cancelled)="pendingDelete.set(null)"
+  />
+</section>

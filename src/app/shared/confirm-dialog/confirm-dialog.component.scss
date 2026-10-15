@@ -1,0 +1,84 @@
+.confirm-dialog {
+  width: min(420px, calc(100vw - 32px));
+  max-width: none;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+}
+
+.confirm-dialog::backdrop {
+  background: rgb(22 39 31 / 42%);
+  backdrop-filter: blur(2px);
+}
+
+.confirm-card {
+  padding: 25px;
+  border: 1px solid #e8eeea;
+  border-radius: 13px;
+  background: white;
+  box-shadow: 0 16px 50px rgb(17 34 26 / 18%);
+}
+
+.confirm-mark {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  margin-bottom: 15px;
+  place-items: center;
+  border-radius: 11px;
+  background: #edf5ef;
+  color: #287c58;
+}
+
+.confirm-mark.destructive {
+  background: #fbefec;
+  color: #b45c4b;
+}
+
+.confirm-card h2 {
+  margin: 0;
+  color: #263b31;
+  font-family: 'Manrope', sans-serif;
+  font-size: 17px;
+}
+
+.confirm-card p {
+  margin: 8px 0 22px;
+  color: #738078;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.confirm-actions button {
+  min-height: 35px;
+  padding: 0 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cancel-button {
+  border: 1px solid #e4eae6;
+  background: white;
+  color: #617068;
+}
+
+.confirm-button {
+  border: 1px solid #176c4d;
+  background: #167a58;
+  color: white;
+}
+
+.confirm-button.destructive {
+  border-color: #b95745;
+  background: #bb5e4c;
+}

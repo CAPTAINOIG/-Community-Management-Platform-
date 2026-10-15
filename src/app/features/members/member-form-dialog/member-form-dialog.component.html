@@ -1,0 +1,71 @@
+<div class="dialog-backdrop" role="presentation" (click)="onBackdrop($event)">
+  <section class="member-dialog" role="dialog" aria-modal="true" [attr.aria-label]="member ? 'Edit member' : 'Add a member'">
+    <header class="dialog-header">
+      <div>
+        <span class="dialog-kicker">{{ member ? 'MEMBER PROFILE' : 'NEW REGISTRATION' }}</span>
+        <h2>{{ member ? 'Edit member' : 'Add a member' }}</h2>
+        <p>{{ member ? 'Update their contact details and community interests.' : 'Add someone new to your community.' }}</p>
+      </div>
+      <button class="close-button" type="button" aria-label="Close form" (click)="cancelled.emit()"><ng-icon name="lucideX" size="18" /></button>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <label class="form-field full-width">
+          <span>Full name <b>*</b></span>
+          <input formControlName="fullName" autocomplete="name" placeholder="e.g. Amara Okafor" [attr.aria-invalid]="isInvalid('fullName')" />
+          @if (isInvalid('fullName')) { <small class="field-error">{{ errorMessage('fullName') }}</small> }
+        </label>
+        <label class="form-field">
+          <span>Email address <b>*</b></span>
+          <input type="email" formControlName="email" autocomplete="email" placeholder="name@example.org" [attr.aria-invalid]="isInvalid('email')" />
+          @if (isInvalid('email')) { <small class="field-error">{{ errorMessage('email') }}</small> }
+        </label>
+        <label class="form-field">
+          <span>Phone number <b>*</b></span>
+          <input type="tel" formControlName="phone" autocomplete="tel" placeholder="+44 7700 900000" [attr.aria-invalid]="isInvalid('phone')" />
+          @if (isInvalid('phone')) { <small class="field-error">{{ errorMessage('phone') }}</small> }
+        </label>
+        <label class="form-field full-width">
+          <span>Address <b>*</b></span>
+          <input formControlName="address" autocomplete="street-address" placeholder="Street, town or city" [attr.aria-invalid]="isInvalid('address')" />
+          @if (isInvalid('address')) { <small class="field-error">{{ errorMessage('address') }}</small> }
+        </label>
+        <label class="form-field">
+          <span>Community group <b>*</b></span>
+          <input formControlName="group" list="community-groups" placeholder="Choose or add a group" [attr.aria-invalid]="isInvalid('group')" />
+          <datalist id="community-groups">
+            @for (group of groups; track group) { <option [value]="group"></option> }
+          </datalist>
+          @if (isInvalid('group')) { <small class="field-error">{{ errorMessage('group') }}</small> }
+        </label>
+        <label class="form-field">
+          <span>Membership status</span>
+          <select formControlName="status">
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </label>
+        <label class="form-field full-width">
+          <span>Skills</span>
+          <input formControlName="skills" placeholder="Separate skills with commas" />
+          <small class="field-hint">These help coordinators connect people with opportunities.</small>
+        </label>
+        <label class="form-field full-width">
+          <span>Interests</span>
+          <input formControlName="interests" placeholder="e.g. youth development, wellbeing" />
+        </label>
+      </div>
+
+      @if (submitted && form.invalid) {
+        <p class="form-summary" role="alert">Please correct the highlighted fields before saving.</p>
+      }
+
+      <footer class="dialog-actions">
+        <button class="secondary-button" type="button" (click)="cancelled.emit()">Cancel</button>
+        <button class="submit-button" type="submit"><ng-icon name="lucideCheck" size="15" /> {{ member ? 'Save changes' : 'Add member' }}</button>
+      </footer>
+    </form>
+  </section>
+</div>

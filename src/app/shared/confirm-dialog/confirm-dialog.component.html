@@ -1,0 +1,13 @@
+<dialog #dialog class="confirm-dialog" (cancel)="cancelFromEscape($event)" (click)="cancelFromBackdrop($event)">
+  <section class="confirm-card" role="alertdialog" aria-modal="true" [attr.aria-label]="title">
+    <div class="confirm-mark" [class.destructive]="destructive">
+      <ng-icon [name]="destructive ? 'lucideX' : 'lucideCircleHelp'" size="20" aria-hidden="true" />
+    </div>
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+    <div class="confirm-actions">
+      <button class="cancel-button" type="button" (click)="cancelled.emit()">Cancel</button>
+      <button class="confirm-button" [class.destructive]="destructive" type="button" (click)="confirmed.emit()">{{ confirmLabel }}</button>
+    </div>
+  </section>
+</dialog>

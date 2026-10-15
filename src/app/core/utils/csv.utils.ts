@@ -1,0 +1,20 @@
+export function toCsv(headers: string[], rows: Array<Array<string | number>>): string {
+  const escape = (value: string | number): string => {
+    const text = String(value);
+    return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+  };
+
+  return [headers, ...rows]
+    .map((row) => row.map(escape).join(','))
+    .join('\r\n');
+}
+
+export function downloadCsv(filename: string, csv: string): void {
+  const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}

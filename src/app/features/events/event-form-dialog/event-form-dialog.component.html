@@ -1,0 +1,53 @@
+<div class="dialog-backdrop" role="presentation" (click)="cancelled.emit()">
+  <section class="event-dialog" role="dialog" aria-modal="true" [attr.aria-label]="event ? 'Edit event' : 'Create event'" (click)="$event.stopPropagation()">
+    <header class="dialog-header">
+      <div>
+        <span class="dialog-kicker">{{ event ? 'EVENT DETAILS' : 'NEW COMMUNITY EVENT' }}</span>
+        <h2>{{ event ? 'Edit event' : 'Create an event' }}</h2>
+        <p>Set the details so members know when and where to join.</p>
+      </div>
+      <button class="close-button" type="button" aria-label="Close form" (click)="cancelled.emit()"><ng-icon name="lucideX" size="18" /></button>
+    </header>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <label class="form-field full-width">
+          <span>Event name <b>*</b></span>
+          <input formControlName="title" placeholder="e.g. Community garden open day" [attr.aria-invalid]="isInvalid('title')" />
+          @if (isInvalid('title')) { <small class="field-error">Enter an event name (up to 100 characters).</small> }
+        </label>
+        <label class="form-field full-width">
+          <span>Description <b>*</b></span>
+          <textarea formControlName="description" rows="3" placeholder="What will happen at this event?" [attr.aria-invalid]="isInvalid('description')"></textarea>
+          @if (isInvalid('description')) { <small class="field-error">Add a short description for attendees.</small> }
+        </label>
+        <label class="form-field full-width">
+          <span>Venue <b>*</b></span>
+          <input formControlName="venue" placeholder="Community centre, address, or online" [attr.aria-invalid]="isInvalid('venue')" />
+          @if (isInvalid('venue')) { <small class="field-error">Enter an event venue.</small> }
+        </label>
+        <label class="form-field">
+          <span>Starts <b>*</b></span>
+          <input type="datetime-local" formControlName="startsAt" [attr.aria-invalid]="isInvalid('startsAt')" />
+          @if (isInvalid('startsAt')) { <small class="field-error">Choose a valid start date and time.</small> }
+        </label>
+        <label class="form-field">
+          <span>Ends <b>*</b></span>
+          <input type="datetime-local" formControlName="endsAt" [attr.aria-invalid]="isInvalid('endsAt')" />
+          @if (isInvalid('endsAt')) { <small class="field-error">Choose a valid end date and time.</small> }
+        </label>
+        @if (submitted && form.hasError('endsBeforeStart')) {
+          <p class="field-error full-width" role="alert">The end time must be after the start time.</p>
+        }
+        <label class="form-field">
+          <span>Capacity <b>*</b></span>
+          <input type="number" min="1" max="5000" formControlName="capacity" [attr.aria-invalid]="isInvalid('capacity')" />
+          @if (isInvalid('capacity')) { <small class="field-error">Capacity must be between 1 and 5,000.</small> }
+        </label>
+      </div>
+      <footer class="dialog-actions">
+        <button class="secondary-button" type="button" (click)="cancelled.emit()">Cancel</button>
+        <button class="submit-button" type="submit"><ng-icon name="lucideCheck" size="15" /> {{ event ? 'Save changes' : 'Create event' }}</button>
+      </footer>
+    </form>
+  </section>
+</div>

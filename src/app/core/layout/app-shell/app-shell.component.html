@@ -1,0 +1,140 @@
+<div class="app-frame" [class.sidebar-collapsed]="collapsed()" [class.mobile-menu-open]="mobileMenuOpen()">
+  <button
+    class="mobile-scrim"
+    type="button"
+    aria-label="Close navigation menu"
+    [hidden]="!mobileMenuOpen()"
+    (click)="closeMobileMenu()"
+  ></button>
+
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="brand" routerLink="/" aria-label="CommunityHub overview" (click)="closeMobileMenu()">
+      <span class="brand-mark">c<span>.</span></span>
+      <span class="brand-name">community<span>hub</span></span>
+    </a>
+
+    <div class="workspace-switcher">
+      <span class="workspace-avatar">E</span>
+      <span class="workspace-copy">
+        <strong>Eastside Community</strong>
+        <small>Organisation workspace</small>
+      </span>
+      <ng-icon name="lucideChevronDown" size="15" aria-hidden="true" />
+    </div>
+
+    <nav class="nav-sections">
+      <span class="section-label">WORKSPACE</span>
+      @for (item of primaryNavigation; track item.path) {
+        <a
+          class="nav-link"
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+          [attr.aria-label]="collapsed() ? item.label : null"
+          (click)="closeMobileMenu()"
+        >
+          <ng-icon [name]="item.icon" size="18" aria-hidden="true" />
+          <span>{{ item.label }}</span>
+          @if (item.label === 'Members') {
+            <span class="nav-count">{{ community.members().length }}</span>
+          }
+        </a>
+      }
+
+      <span class="section-label section-label-spaced">MANAGE</span>
+      @for (item of supportNavigation; track item.path) {
+        <a
+          class="nav-link"
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [attr.aria-label]="collapsed() ? item.label : null"
+          (click)="closeMobileMenu()"
+        >
+          <ng-icon [name]="item.icon" size="18" aria-hidden="true" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <span class="help-icon"><ng-icon name="lucideCircleHelp" size="17" aria-hidden="true" /></span>
+        <strong>Need a hand?</strong>
+        <p>Find tips for managing your community.</p>
+        <button type="button" class="help-link" (click)="notificationsOpen.set(false)">Visit help centre <span aria-hidden="true">↗</span></button>
+      </div>
+      <div class="profile-card">
+        <span class="profile-avatar">AM</span>
+        <span class="profile-copy"><strong>Alex Morgan</strong><small>Administrator</small></span>
+        <button class="profile-more" type="button" aria-label="Account options">
+          <ng-icon name="lucideChevronDown" size="15" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="main-column">
+    <header class="topbar">
+      <button
+        class="icon-button menu-button"
+        type="button"
+        [attr.aria-label]="mobileMenuOpen() ? 'Close navigation menu' : 'Open navigation menu'"
+        (click)="mobileMenuOpen.update((open) => !open)"
+      >
+        <ng-icon [name]="mobileMenuOpen() ? 'lucideX' : 'lucideMenu'" size="19" aria-hidden="true" />
+      </button>
+      <button
+        class="icon-button collapse-button"
+        type="button"
+        [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        (click)="toggleSidebar()"
+      >
+        <ng-icon name="lucidePanelLeftClose" size="18" aria-hidden="true" />
+      </button>
+      <div class="breadcrumbs"><span>Eastside Community</span><span class="breadcrumb-separator">/</span><strong>Overview</strong></div>
+
+      <div class="topbar-actions">
+        <label class="search-box">
+          <ng-icon name="lucideSearch" size="17" aria-hidden="true" />
+          <input type="search" placeholder="Search anything..." aria-label="Search CommunityHub" />
+          <kbd>⌘ K</kbd>
+        </label>
+        <div class="notification-wrap">
+          <button
+            class="icon-button notification-button"
+            type="button"
+            aria-label="Notifications"
+            [attr.aria-expanded]="notificationsOpen()"
+            (click)="toggleNotifications()"
+          >
+            <ng-icon name="lucideBell" size="18" aria-hidden="true" />
+            <span class="notification-dot"></span>
+          </button>
+          @if (notificationsOpen()) {
+            <section class="notification-popover" aria-label="Recent activity notifications">
+              <div class="popover-heading"><strong>Recent activity</strong><button type="button" (click)="toggleNotifications()" aria-label="Close notifications"><ng-icon name="lucideX" size="16" /></button></div>
+              @for (activity of community.activities().slice(0, 3); track activity.id) {
+                <div class="notification-item">
+                  <span class="notification-avatar">{{ activity.actor.charAt(0) }}</span>
+                  <span><strong>{{ activity.actor }}</strong><small>{{ activity.description }}</small></span>
+                </div>
+              }
+            </section>
+          }
+        </div>
+        <span class="topbar-divider"></span>
+        <button class="topbar-profile" type="button" aria-label="Signed in as Alex Morgan">
+          <span class="profile-avatar">AM</span>
+          <span class="topbar-profile-copy"><strong>Alex Morgan</strong><small>Admin</small></span>
+          <ng-icon name="lucideChevronDown" size="15" aria-hidden="true" />
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <router-outlet />
+    </main>
+    <footer class="app-footer"><span>© 2026 CommunityHub</span><span>Made for stronger communities</span></footer>
+  </section>
+</div>
+<app-toast-stack />
