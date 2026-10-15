@@ -61,8 +61,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     if (!context) return;
 
     const gradient = context.createLinearGradient(0, 0, 0, 220);
-    gradient.addColorStop(0, 'rgba(22, 122, 88, 0.18)');
-    gradient.addColorStop(1, 'rgba(22, 122, 88, 0)');
+    gradient.addColorStop(0, 'rgba(53, 84, 232, 0.18)');
+    gradient.addColorStop(1, 'rgba(53, 84, 232, 0)');
 
     this.chart = new Chart(canvas, {
       type: 'line',
@@ -71,13 +71,13 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         datasets: [{
           label: 'New members',
           data: this.community.memberGrowth().map((month) => month.count),
-          borderColor: '#167a58',
+          borderColor: '#3554e8',
           backgroundColor: gradient,
           borderWidth: 2.5,
           pointRadius: 3,
           pointHoverRadius: 5,
           pointBackgroundColor: '#fff',
-          pointBorderColor: '#167a58',
+          pointBorderColor: '#3554e8',
           pointBorderWidth: 2,
           tension: 0.38,
           fill: true,
@@ -90,7 +90,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
           legend: { display: false },
           tooltip: {
             displayColors: false,
-            backgroundColor: '#18372c',
+            backgroundColor: '#172340',
             padding: 10,
             titleFont: { family: 'DM Sans', size: 11, weight: 'normal' },
             bodyFont: { family: 'DM Sans', size: 12, weight: 'bold' },

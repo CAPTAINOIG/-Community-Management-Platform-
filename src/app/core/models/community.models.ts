@@ -1,6 +1,7 @@
 export type MemberStatus = 'Active' | 'Pending' | 'Inactive';
 export type EventStatus = 'Upcoming' | 'Ongoing' | 'Completed';
 export type ProgrammeStatus = 'Open' | 'In progress' | 'Completed';
+export type ProgrammeApplicationStatus = 'Pending' | 'Approved' | 'Rejected' | 'Completed';
 export type ProjectStatus = 'Planning' | 'In progress' | 'Completed' | 'On hold';
 
 export interface Member {
@@ -39,7 +40,11 @@ export interface Volunteer {
   availability: string;
   hoursContributed: number;
   active: boolean;
+  assignedEventIds: string[];
+  assignedProjectIds: string[];
 }
+
+export type VolunteerDraft = Pick<Volunteer, 'skills' | 'availability' | 'active'>;
 
 export interface EmpowermentProgramme {
   id: string;
@@ -50,6 +55,16 @@ export interface EmpowermentProgramme {
   capacity: number;
   participantMemberIds: string[];
   status: ProgrammeStatus;
+}
+
+export type ProgrammeDraft = Pick<EmpowermentProgramme, 'title' | 'category' | 'startsAt' | 'endsAt' | 'capacity' | 'status'>;
+
+export interface ProgrammeApplication {
+  id: string;
+  programmeId: string;
+  memberId: string;
+  appliedAt: string;
+  status: ProgrammeApplicationStatus;
 }
 
 export interface CommunityProject {
@@ -76,6 +91,7 @@ export interface CommunityData {
   events: CommunityEvent[];
   volunteers: Volunteer[];
   programmes: EmpowermentProgramme[];
+  applications: ProgrammeApplication[];
   projects: CommunityProject[];
   activities: CommunityActivity[];
 }

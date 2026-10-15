@@ -1,0 +1,9 @@
+.dialog-backdrop{position:fixed;z-index:50;inset:0;display:grid;place-items:center;padding:16px;background:rgb(22 39 31 / 42%);backdrop-filter:blur(2px)}
+.application-dialog{width:min(430px,100%);padding:23px 24px 20px;border:1px solid #e8eeea;border-radius:13px;background:#fff;box-shadow:0 16px 50px rgb(17 34 26 / 18%)}
+.dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:18px}.dialog-kicker{color:#8b9891;font-size:8px;font-weight:700;letter-spacing:1px}
+.dialog-header h2{margin:5px 0 0;color:#20372d;font-family:'Manrope',sans-serif;font-size:18px}.dialog-header p{margin:5px 0 0;color:#87948d;font-size:10px}
+.close-button{display:grid;width:31px;height:31px;place-items:center;border:1px solid #e9eeeb;border-radius:7px;background:#fff;color:#75827b;cursor:pointer}
+.form-field{display:grid;gap:6px;color:#53645a;font-size:10px;font-weight:600}.form-field b{color:#c86b56}.form-field select{height:37px;padding:0 10px;border:1px solid #e3eae5;border-radius:6px;background:#fff;color:#34483d;font-size:10px}
+.field-error{color:#b45342;font-size:9px}.field-hint{color:#929e97;font-size:9px;font-weight:400}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:15px;border-top:1px solid #edf1ee}.dialog-actions button{display:inline-flex;min-height:35px;align-items:center;justify-content:center;gap:6px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600}
+.secondary-button{border:1px solid #e2e9e4;background:#fff;color:#627169}.submit-button{border:1px solid #176c4d;background:#167a58;color:#fff}.submit-button:disabled{opacity:.5;cursor:not-allowed}

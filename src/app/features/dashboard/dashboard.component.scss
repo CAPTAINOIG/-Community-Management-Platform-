@@ -585,3 +585,82 @@ h1 span {
     padding: 10px;
   }
 }
+
+/* Clearer dashboard hierarchy */
+.dashboard { gap: 22px; }
+.welcome-row { margin-bottom: 2px; }
+.eyebrow { color: #76867d; font-size: 10px; letter-spacing: 1.2px; }
+h1 { margin-top: 8px; font-size: clamp(28px, 2.5vw, 34px); letter-spacing: -1.3px; line-height: 1.2; }
+h1 span { font-size: 24px; }
+.welcome-row p, .panel-header p { margin-top: 7px; color: #718078; font-size: 13px; line-height: 1.55; }
+.primary-button { min-height: 43px; padding-inline: 17px; border: 1px solid #304bd9; border-radius: 9px; background: #3554e8; color: #fff; font-size: 12px; box-shadow: 0 4px 9px rgb(53 84 232 / 18%); }
+.primary-button:hover { background: #2c46d0; }
+.metrics-grid { gap: 16px; }
+.metric-card { min-height: 146px; padding: 19px 20px 17px; border-color: #e4eae6; border-radius: 14px; box-shadow: var(--shadow); }
+.metric-card:hover { box-shadow: var(--shadow-card); }
+.metric-topline { color: #53645b; font-size: 12px; }
+.metric-icon { width: 36px; height: 36px; border-radius: 10px; }
+.green .metric-icon { background: #e7ebff; color: #3554e8; }
+.metric-value { margin-top: 13px; font-size: 30px; letter-spacing: -1px; }
+.metric-foot { gap: 7px; margin-top: 10px; color: #7d8a83; font-size: 11px; }
+.main-grid, .lower-grid { gap: 16px; }
+.main-grid .panel { min-height: 340px; }
+.panel { padding: 22px 23px 20px; border-color: #e4eae6; border-radius: 14px; box-shadow: var(--shadow); }
+.panel-header h2 { color: #1c3429; font-size: 15px; letter-spacing: -.3px; }
+.panel-header p { margin-top: 6px; font-size: 11px; }
+.chart-period { gap: 7px; padding: 8px 10px; border-radius: 8px; font-size: 11px; }
+.chart-key { gap: 7px; margin-top: 20px; font-size: 11px; }
+.chart-key span { width: 8px; height: 8px; }
+.chart-wrap { height: 204px; margin: 7px -5px -2px -8px; }
+.text-link { gap: 4px; padding-top: 3px; font-size: 11px; }
+.attendance-summary { gap: 10px; margin: 23px 0 19px; }
+.attendance-rate { font-size: 36px; }
+.attendance-rate span { font-size: 21px; }
+.attendance-label { font-size: 11px; }
+.attendance-list { gap: 15px; }
+.attendance-row { gap: 8px; }
+.attendance-copy strong { font-size: 11px; }
+.attendance-copy span { font-size: 10px; }
+.attendance-bar { height: 6px; }
+.empty-inline { padding: 35px 0; font-size: 12px; }
+.lower-grid .panel { min-height: 260px; }
+.event-list, .activity-list { margin-top: 15px; }
+.event-row { min-height: 62px; gap: 12px; }
+.date-tile { width: 42px; height: 44px; border-radius: 9px; }
+.date-tile strong { font-size: 15px; }
+.date-tile small { font-size: 9px; }
+.event-info > strong { font-size: 11px; }
+.event-info small { font-size: 10px; }
+.event-capacity { font-size: 11px; }
+.event-capacity small { font-size: 9px; }
+.activity-row { min-height: 51px; gap: 10px; }
+.activity-avatar { width: 32px; height: 32px; font-size: 9px; }
+.activity-copy { gap: 4px; }
+.activity-copy strong { font-size: 11px; }
+.activity-copy small, .activity-time { font-size: 9px; }
+.icon-quiet { width: 32px; height: 32px; border-radius: 8px; }
+
+@media (max-width: 760px) {
+  .dashboard { gap: 16px; }
+  h1 { font-size: 28px; }
+  .welcome-row p { font-size: 12px; }
+  .welcome-row .primary-button { width: 42px; flex-basis: 42px; min-height: 42px; border-radius: 10px; }
+  .metrics-grid { gap: 10px; }
+  .metric-card { min-height: 126px; padding: 13px; }
+  .metric-topline { align-items: flex-start; gap: 4px; font-size: 10px; }
+  .metric-icon { width: 30px; height: 30px; flex: 0 0 auto; }
+  .metric-value { margin-top: 9px; font-size: 24px; }
+  .metric-foot { font-size: 9px; }
+  .main-grid, .lower-grid { gap: 11px; }
+  .panel { padding: 17px; border-radius: 12px; }
+  .main-grid .panel { min-height: auto; }
+  .chart-wrap { height: 190px; }
+  .lower-grid .panel { min-height: 0; }
+  .attendance-panel { min-height: 250px !important; }
+}
+
+@media (max-width: 410px) {
+  h1 { font-size: 25px; }
+  .metric-card { padding: 11px; }
+  .metric-topline { font-size: 9px; }
+}

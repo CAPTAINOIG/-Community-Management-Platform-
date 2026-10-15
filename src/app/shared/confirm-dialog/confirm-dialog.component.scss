@@ -82,3 +82,13 @@
   border-color: #b95745;
   background: #bb5e4c;
 }
+
+.confirm-card { padding: 29px; border-color: #e3eae6; border-radius: 16px; box-shadow: 0 25px 70px rgb(12 28 20 / 24%); }
+.confirm-mark { width: 46px; height: 46px; margin-bottom: 18px; border-radius: 13px; }
+.confirm-card h2 { font-size: 20px; letter-spacing: -.4px; }
+.confirm-card p { margin: 9px 0 24px; color: #64736b; font-size: 13px; }
+.confirm-actions { gap: 9px; }
+.confirm-actions button { min-height: 41px; padding-inline: 15px; border-radius: 8px; font-size: 12px; }
+.cancel-button { border-color: #dfe7e2; color: #4d5f55; }
+.confirm-button { border-color: #304bd9; background: #3554e8; }
+.confirm-button.destructive { border-color: #af4d3d; background: #b65343; }

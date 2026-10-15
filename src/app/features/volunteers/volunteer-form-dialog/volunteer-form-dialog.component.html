@@ -1,0 +1,30 @@
+<div class="dialog-backdrop" role="presentation" (click)="cancelled.emit()">
+  <section class="volunteer-dialog" role="dialog" aria-modal="true" [attr.aria-label]="volunteer ? 'Edit volunteer' : 'Register volunteer'" (click)="$event.stopPropagation()">
+    <header class="dialog-header">
+      <div><span class="dialog-kicker">VOLUNTEER TEAM</span><h2>{{ volunteer ? 'Update volunteer' : 'Register a volunteer' }}</h2><p>Match a member’s skills with ways to contribute.</p></div>
+      <button class="close-button" type="button" aria-label="Close form" (click)="cancelled.emit()"><ng-icon name="lucideX" size="18" /></button>
+    </header>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        @if (!volunteer) {
+          <label class="form-field full-width"><span>Community member <b>*</b></span>
+            <select formControlName="memberId" [attr.aria-invalid]="submitted && form.controls.memberId.invalid">
+              <option value="">Choose an active member</option>
+              @for (member of availableMembers; track member.id) { <option [value]="member.id">{{ member.fullName }} · {{ member.group }}</option> }
+            </select>
+            @if (submitted && form.controls.memberId.invalid) { <small class="field-error">Choose a member to register.</small> }
+            @if (!availableMembers.length) { <small class="field-hint">All active members are already registered as volunteers.</small> }
+          </label>
+        } @else {
+          <div class="selected-member full-width"><small>VOLUNTEER</small><strong>{{ members.find((member) => member.id === volunteer?.memberId)?.fullName ?? 'Community member' }}</strong></div>
+        }
+        <label class="form-field full-width"><span>Skills</span><input formControlName="skills" placeholder="e.g. First aid, translation, gardening" /><small class="field-hint">Separate skills with commas.</small></label>
+        <label class="form-field full-width"><span>Availability <b>*</b></span><input formControlName="availability" placeholder="e.g. Weekends or weekday evenings" />@if (submitted && form.controls.availability.invalid) { <small class="field-error">Add the volunteer’s availability.</small> }</label>
+        @if (volunteer) {
+          <label class="active-toggle full-width"><input type="checkbox" formControlName="active" /><span>Active volunteer</span><small>Inactive volunteers cannot be assigned to new activities.</small></label>
+        }
+      </div>
+      <footer class="dialog-actions"><button class="secondary-button" type="button" (click)="cancelled.emit()">Cancel</button><button class="submit-button" type="submit"><ng-icon name="lucideCheck" size="15" /> {{ volunteer ? 'Save changes' : 'Add volunteer' }}</button></footer>
+    </form>
+  </section>
+</div>

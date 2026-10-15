@@ -1,53 +1,44 @@
 <section class="members-page">
   <div class="page-heading">
     <div>
-      <span class="eyebrow">COMMUNITY DIRECTORY</span>
       <h1>Members</h1>
-      <p>Keep track of the people who make your community thrive.</p>
+      <p>Search and manage your community directory.</p>
     </div>
     <div class="heading-actions">
-      <button class="secondary-action" type="button" (click)="exportCsv()"><ng-icon name="lucideDownload" size="15" /> Export CSV</button>
+      <button class="secondary-action" type="button" (click)="exportCsv()"><ng-icon name="lucideDownload" size="14" /> Export</button>
       <button class="primary-action" type="button" (click)="openCreateForm()"><span aria-hidden="true">+</span> Add member</button>
     </div>
   </div>
 
   <div class="summary-row">
-    <div class="summary-card"><span class="summary-icon total"><ng-icon name="lucideUsers" size="17" /></span><span><strong>{{ community.members().length }}</strong><small>Total members</small></span></div>
-    <div class="summary-card"><span class="summary-icon active"><span class="status-dot"></span></span><span><strong>{{ activeCount() }}</strong><small>Active members</small></span></div>
-    <div class="summary-card"><span class="summary-icon pending"><span class="status-dot"></span></span><span><strong>{{ pendingCount() }}</strong><small>Pending review</small></span></div>
-    <div class="summary-card"><span class="summary-icon groups">G</span><span><strong>{{ community.members().map((member) => member.group).filter((group, index, groups) => groups.indexOf(group) === index).length }}</strong><small>Community groups</small></span></div>
+    <div class="summary-card"><span class="summary-icon total"><ng-icon name="lucideUserRound" size="16" /></span><span><strong>{{ community.members().length }}</strong><small>Total members</small></span></div>
+    <div class="summary-card"><span class="summary-icon active"><ng-icon name="lucideCheck" size="15" /></span><span><strong>{{ activeCount() }}</strong><small>Active members</small></span></div>
+    <div class="summary-card"><span class="summary-icon pending"><ng-icon name="lucideClock3" size="15" /></span><span><strong>{{ pendingCount() }}</strong><small>Pending review</small></span></div>
+    <div class="summary-card"><span class="summary-icon groups"><ng-icon name="lucideUsers" size="15" /></span><span><strong>{{ community.members().map((member) => member.group).filter((group, index, groups) => groups.indexOf(group) === index).length }}</strong><small>Community groups</small></span></div>
   </div>
 
-  <section class="directory-panel">
-    <div class="directory-top">
-      <div><h2>All members <span>{{ filteredMembers().length }}</span></h2><p>Search and manage your community directory.</p></div>
-      @if (searchTerm() || statusFilter() !== 'All' || fromDate() || toDate()) {
-        <button class="clear-filters" type="button" (click)="clearFilters()">Clear filters</button>
-      }
-    </div>
-
+  <section class="directory-panel" aria-label="Member directory">
     <div class="filters">
       <label class="search-control">
         <ng-icon name="lucideSearch" size="16" aria-hidden="true" />
         <input type="search" aria-label="Search members by name, email, or phone" placeholder="Search name, email or phone..." [value]="searchTerm()" (input)="setSearch($event)" />
       </label>
-      <label class="filter-control">
-        <span>Status</span>
-        <select aria-label="Filter by membership status" [value]="statusFilter()" (change)="setStatus($event)">
-          <option value="All">All statuses</option>
-          <option value="Active">Active</option>
-          <option value="Pending">Pending</option>
-          <option value="Inactive">Inactive</option>
-        </select>
-      </label>
-      <label class="filter-control date-control">
-        <span>Registered from</span>
-        <input type="date" aria-label="Registered from date" [value]="fromDate()" (change)="setDate($event, 'from')" />
-      </label>
-      <label class="filter-control date-control">
-        <span>Registered to</span>
-        <input type="date" aria-label="Registered to date" [value]="toDate()" (change)="setDate($event, 'to')" />
-      </label>
+      <div class="status-tabs" role="group" aria-label="Filter members by status">
+        <button type="button" [class.selected]="statusFilter() === 'All'" (click)="filterByStatus('All')">All <span>{{ community.members().length }}</span></button>
+        <button type="button" [class.selected]="statusFilter() === 'Active'" (click)="filterByStatus('Active')">Active</button>
+        <button type="button" [class.selected]="statusFilter() === 'Pending'" (click)="filterByStatus('Pending')">Pending</button>
+        <button type="button" [class.selected]="statusFilter() === 'Inactive'" (click)="filterByStatus('Inactive')">Inactive</button>
+      </div>
+      <details class="date-filter">
+        <summary><ng-icon name="lucideCalendarDays" size="14" aria-hidden="true" /><span>Registered date</span><ng-icon class="date-chevron" name="lucideChevronDown" size="13" aria-hidden="true" /></summary>
+        <div class="date-popover">
+          <label><span>From</span><input type="date" aria-label="Registered from date" [value]="fromDate()" (change)="setDate($event, 'from')" /></label>
+          <label><span>To</span><input type="date" aria-label="Registered to date" [value]="toDate()" (change)="setDate($event, 'to')" /></label>
+        </div>
+      </details>
+      @if (searchTerm() || statusFilter() !== 'All' || fromDate() || toDate()) {
+        <button class="clear-filters" type="button" (click)="clearFilters()">Clear</button>
+      }
     </div>
 
     <div class="table-scroll">
@@ -73,12 +64,12 @@
               </td>
               <td><div class="contact-cell"><span>{{ member.email }}</span><small>{{ member.phone }}</small></div></td>
               <td><span class="status-badge" [class]="'status-badge ' + member.status.toLowerCase()"><span></span>{{ member.status }}</span></td>
-              <td><span class="group-label">{{ member.group }}</span></td>
+              <td><span class="group-label" [class.green-group]="member.group === 'Green Futures'" [class.purple-group]="member.group === 'Creative Circle'" [class.cyan-group]="member.group === 'Digital Bridges'">{{ member.group }}</span></td>
               <td class="date-cell">{{ formattedDate(member.registeredAt) }}</td>
               <td>
                 <div class="row-actions">
-                  <button type="button" aria-label="Edit {{ member.fullName }}" (click)="openEditForm(member)">Edit</button>
-                  <button type="button" class="delete-action" aria-label="Delete {{ member.fullName }}" (click)="pendingDelete.set(member)">Delete</button>
+                  <button type="button" aria-label="Edit {{ member.fullName }}" title="Edit member" (click)="openEditForm(member)"><ng-icon name="lucidePencil" size="13" /></button>
+                  <button type="button" class="delete-action" aria-label="Delete {{ member.fullName }}" title="Delete member" (click)="pendingDelete.set(member)"><ng-icon name="lucideTrash2" size="13" /></button>
                 </div>
               </td>
             </tr>
@@ -101,7 +92,7 @@
     </div>
 
     <footer class="table-footer">
-      <span>Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of <strong>{{ filteredMembers().length }}</strong> members</span>
+      <span>Showing <strong>{{ rangeEnd }}</strong> of <strong>{{ filteredMembers().length }}</strong> members</span>
       <div class="pagination">
         <button type="button" aria-label="Previous page" [disabled]="currentPage() <= 1" (click)="changePage(currentPage() - 1)">←</button>
         @for (page of [].constructor(pageCount()); track $index) {

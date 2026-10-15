@@ -1,6 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommunityDataService } from '../../services/community-data.service';
 import { ToastStackComponent } from '../../../shared/toast-stack/toast-stack.component';
 
@@ -17,6 +17,7 @@ interface NavigationItem {
   styleUrl: './app-shell.component.scss',
 })
 export class AppShellComponent {
+  private readonly router = inject(Router);
   readonly collapsed = signal(false);
   readonly mobileMenuOpen = signal(false);
   readonly notificationsOpen = signal(false);
@@ -36,6 +37,14 @@ export class AppShellComponent {
   ];
 
   constructor(readonly community: CommunityDataService) {}
+
+  get currentPageLabel(): string {
+    const path = this.router.url.split(/[?#]/, 1)[0].replace(/\/+$/, '');
+    if (!path) return 'Overview';
+    if (path.startsWith('/events/')) return 'Event details';
+    const segment = path.split('/')[1] ?? '';
+    return segment.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
 
   toggleSidebar(): void {
     this.collapsed.update((collapsed) => !collapsed);

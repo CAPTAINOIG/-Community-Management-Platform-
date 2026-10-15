@@ -663,3 +663,83 @@
     padding-inline: 16px;
   }
 }
+
+/* Compact blue navigation from the supplied reference */
+.app-frame { --sidebar-width: 182px; }
+.sidebar { padding: 16px 10px 14px; border-right: 2px solid #a7c2ff; box-shadow: none; }
+.brand { gap: 8px; padding-inline: 6px; }
+.brand-mark { width: 26px; height: 26px; border-radius: 8px; background: #3554e8; box-shadow: none; font-size: 18px; }
+.brand-mark span { display: none; }
+.brand-name { font-size: 13px; letter-spacing: -.35px; }
+.brand-name span { color: #19315d; }
+.workspace-switcher { min-height: 54px; gap: 7px; margin: 15px 0 18px; padding: 7px; border-color: #e7eaf2; border-radius: 10px; background: #fafbfe; }
+.workspace-avatar { width: 25px; height: 25px; border-radius: 7px; background: #e7eaff; color: #3554e8; font-size: 10px; }
+.workspace-copy { gap: 2px; }
+.workspace-copy strong { white-space: normal; font-size: 9px; line-height: 1.2; }
+.workspace-copy small { max-width: 95px; font-size: 8px; line-height: 1.25; white-space: normal; }
+.workspace-switcher > ng-icon { width: 12px; flex: 0 0 auto; }
+.nav-sections { gap: 2px; }
+.section-label { padding: 0 8px 6px; color: #7180a5; font-size: 7px; letter-spacing: .85px; }
+.section-label-spaced { margin-top: 17px; }
+.nav-link { min-height: 30px; gap: 8px; padding: 0 9px; border-radius: 8px; color: #283955; font-size: 10px; }
+.nav-link ng-icon { width: 14px; height: 14px; }
+.nav-link:hover { background: #f0f3ff; color: #2948da; }
+.nav-link.is-active { background: #354fe1; color: #fff; box-shadow: 0 3px 7px rgb(53 79 225 / 17%); }
+.nav-link.is-active::before { display: none; }
+.nav-count { min-width: 19px; height: 16px; border-radius: 8px; background: rgb(255 255 255 / 20%); color: white; font-size: 8px; }
+.sidebar-bottom { display: none; }
+.main-column { background: #f3f4f9; margin-left: var(--sidebar-width); }
+.topbar { height: 49px; gap: 12px; padding-inline: 25px; border-bottom-color: #eceef4; background: #fff; }
+.collapse-button { display: none; }
+.breadcrumbs { gap: 7px; color: #73809e; font-size: 9px; }
+.breadcrumbs strong { color: #172340; font-weight: 700; }
+.topbar-actions { gap: 10px; }
+.search-box { width: 200px; height: 30px; gap: 7px; padding-inline: 9px; border-color: #f0f1f7; border-radius: 9px; background: #f5f6fa; }
+.search-box input { font-size: 9px; }
+.search-box kbd { padding: 2px 4px; border-color: #e8eaf1; font-size: 8px; }
+.icon-button { width: 30px; height: 30px; border-radius: 9px; }
+.notification-button { border-color: #eceef5; background: #fff; }
+.notification-dot { top: 5px; right: 5px; }
+.topbar-divider { display: none; }
+.topbar-profile { gap: 6px; }
+.topbar-profile .profile-avatar { width: 27px; height: 27px; border: 0; background: #111b34; color: white; font-size: 9px; }
+.topbar-profile-copy { gap: 1px; }
+.topbar-profile-copy strong { color: #1a2945; font-size: 9px; }
+.topbar-profile-copy small { color: #7885a3; font-size: 8px; }
+.topbar-profile > ng-icon { display: none; }
+.page-content { width: 100%; max-width: none; min-height: calc(100dvh - 49px); padding: 23px 25px 30px; }
+.app-footer { display: none; }
+
+@media (max-width: 1100px) {
+  .topbar { padding-inline: 25px; }
+  .page-content { padding: 23px 25px 30px; }
+}
+
+@media (max-width: 760px) {
+  .app-frame, .sidebar-collapsed { --sidebar-width: 252px; }
+  .main-column { margin-left: 0; }
+  .sidebar { padding: 24px 17px 17px; border-right: 1px solid #e6eaf2; box-shadow: 4px 0 20px rgb(31 49 101 / 9%); }
+  .brand { gap: 10px; padding-inline: 8px; }
+  .brand-mark { width: 34px; height: 34px; font-size: 22px; }
+  .brand-mark span { display: inline; }
+  .brand-name { font-size: 17px; }
+  .workspace-switcher { min-height: 62px; margin: 25px 0 23px; padding: 9px; }
+  .workspace-avatar { width: 34px; height: 34px; font-size: 14px; }
+  .workspace-copy strong { font-size: 11px; }
+  .workspace-copy small { max-width: none; font-size: 10px; }
+  .section-label { padding: 0 10px 8px; font-size: 9px; }
+  .section-label-spaced { margin-top: 22px; }
+  .nav-link { min-height: 40px; gap: 11px; padding-inline: 11px; font-size: 12px; }
+  .nav-link ng-icon { width: 17px; height: 17px; }
+  .nav-link.is-active::before { display: none; }
+  .sidebar-bottom { display: block; margin-top: auto; }
+  .help-card { display: block; }
+  .profile-card { display: flex; }
+  .collapse-button { display: none; }
+  .topbar { height: 52px; padding-inline: 15px; }
+  .breadcrumbs { display: flex; }
+  .search-box { display: none; }
+  .topbar-profile-copy { display: none; }
+  .topbar-profile .profile-avatar { width: 30px; height: 30px; }
+  .page-content { min-height: calc(100dvh - 52px); padding: 21px 16px 28px; }
+}

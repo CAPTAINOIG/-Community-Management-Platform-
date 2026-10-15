@@ -1,0 +1,103 @@
+<section class="volunteers-page">
+  <div class="page-heading">
+    <div><span class="eyebrow">COMMUNITY CONTRIBUTORS</span><h1>Volunteers</h1><p>Support the people who give their time and skills to your community.</p></div>
+    <button class="primary-action" type="button" (click)="openCreateForm()"><span aria-hidden="true">+</span> Register volunteer</button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card"><span class="summary-icon green"><ng-icon name="lucideHandHelping" size="17" /></span><span><strong>{{ community.volunteers().length }}</strong><small>Total volunteers</small></span></div>
+    <div class="summary-card"><span class="summary-icon blue"><span class="status-dot"></span></span><span><strong>{{ activeCount() }}</strong><small>Active volunteers</small></span></div>
+    <div class="summary-card"><span class="summary-icon violet"><ng-icon name="lucideClock3" size="17" /></span><span><strong>{{ community.totalVolunteerHours() }}</strong><small>Hours contributed</small></span></div>
+    <div class="summary-card"><span class="summary-icon amber"><ng-icon name="lucideCalendarDays" size="17" /></span><span><strong>{{ assignedCount() }}</strong><small>With assignments</small></span></div>
+  </div>
+
+  <section class="volunteer-panel">
+    <header class="panel-heading">
+      <div><h2>Volunteer directory <span>{{ filteredVolunteers().length }}</span></h2><p>Profiles, availability, and contribution history.</p></div>
+      <div class="list-tools">
+        <label class="search-control"><ng-icon name="lucideSearch" size="16" /><input type="search" placeholder="Search volunteers..." aria-label="Search volunteer name, group, or skill" [value]="searchTerm()" (input)="setSearch($event)" /></label>
+        <label class="visually-hidden" for="volunteer-status">Filter volunteers by status</label>
+        <select id="volunteer-status" class="status-select" [value]="statusFilter()" (change)="setFilter($event)"><option value="All">All statuses</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
+      </div>
+    </header>
+    @if (filteredVolunteers().length) {
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>VOLUNTEER</th><th>SKILLS</th><th>AVAILABILITY</th><th>HOURS</th><th>ASSIGNMENTS</th><th>STATUS</th><th></th></tr></thead>
+          <tbody>
+            @for (volunteer of filteredVolunteers(); track volunteer.id) {
+              <tr>
+                <td><button class="person-cell" type="button" (click)="selectedVolunteer.set(volunteer)"><span class="avatar">{{ initials(community.getVolunteerName(volunteer)) }}</span><span><strong>{{ community.getVolunteerName(volunteer) }}</strong><small>{{ memberFor(volunteer)?.group ?? 'No group assigned' }}</small></span></button></td>
+                <td><span class="skill-list">{{ volunteer.skills.slice(0, 2).join(' · ') || 'Not specified' }}</span></td>
+                <td>{{ volunteer.availability }}</td>
+                <td><strong class="hours-count">{{ volunteer.hoursContributed }}</strong><small class="hours-unit"> hrs</small></td>
+                <td><span class="assignment-count">{{ volunteer.assignedEventIds.length + volunteer.assignedProjectIds.length }} assigned</span></td>
+                <td><span class="status-badge" [class.inactive]="!volunteer.active"><span></span>{{ volunteer.active ? 'Active' : 'Inactive' }}</span></td>
+                <td><button class="row-action" type="button" (click)="openEditForm(volunteer)">Edit</button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state"><span class="empty-icon"><ng-icon name="lucideHandHelping" size="21" /></span><strong>{{ community.volunteers().length ? 'No volunteers match this search' : 'Build your volunteer team' }}</strong><p>{{ community.volunteers().length ? 'Try a different name, group, or skill.' : 'Register active members who want to contribute their time.' }}</p>@if (!community.volunteers().length) { <button class="primary-action" type="button" (click)="openCreateForm()">Register volunteer</button> }</div>
+    }
+  </section>
+
+  @if (formOpen()) {
+    <app-volunteer-form-dialog [volunteer]="editingVolunteer()" [availableMembers]="availableMembers()" [members]="community.members()" (saved)="saveVolunteer($event)" (cancelled)="formOpen.set(false); editingVolunteer.set(null)" />
+  }
+
+  @if (selectedVolunteer(); as volunteer) {
+    @if (memberFor(volunteer); as member) {
+      <div class="profile-backdrop" role="presentation" (click)="selectedVolunteer.set(null)">
+        <section class="volunteer-profile" role="dialog" aria-modal="true" [attr.aria-label]="member.fullName + ' volunteer profile'" (click)="$event.stopPropagation()">
+          <header class="profile-heading">
+            <button class="close-profile" type="button" aria-label="Close profile" (click)="selectedVolunteer.set(null)">×</button>
+            <span class="profile-avatar">{{ initials(member.fullName) }}</span>
+            <span class="status-badge" [class.inactive]="!volunteer.active"><span></span>{{ volunteer.active ? 'Active volunteer' : 'Inactive' }}</span>
+            <h2>{{ member.fullName }}</h2><p>{{ member.group }}</p>
+            <div class="profile-contact"><a [href]="'mailto:' + member.email">{{ member.email }}</a><a [href]="'tel:' + member.phone">{{ member.phone }}</a></div>
+          </header>
+
+          <div class="profile-stats"><div><strong>{{ volunteer.hoursContributed }}</strong><small>Hours contributed</small></div><div><strong>{{ volunteer.assignedEventIds.length + volunteer.assignedProjectIds.length }}</strong><small>Active assignments</small></div><div><strong>{{ volunteer.skills.length }}</strong><small>Listed skills</small></div></div>
+
+          <section class="profile-section">
+            <h3>Skills & availability</h3>
+            <div class="skill-tags">@for (skill of volunteer.skills; track skill) { <span>{{ skill }}</span> } @empty { <span class="muted-tag">No skills listed</span> }</div>
+            <p class="availability-copy"><ng-icon name="lucideClock3" size="14" /> {{ volunteer.availability }}</p>
+          </section>
+
+          <section class="profile-section">
+            <h3>Record volunteer hours</h3>
+            <div class="hours-entry"><label for="hours-to-add">Hours this shift</label><input id="hours-to-add" type="number" min="1" max="24" [value]="hoursToAdd()" (input)="setHours($event)" /><button class="primary-action" type="button" (click)="recordHours(volunteer)">Add hours</button></div>
+          </section>
+
+          <section class="profile-section assignment-section">
+            <h3>Event assignments</h3>
+            @for (event of community.events(); track event.id) {
+              <label class="assignment-row"><input type="checkbox" [checked]="volunteer.assignedEventIds.includes(event.id)" [disabled]="!volunteer.active" (change)="toggleAssignment(volunteer, 'event', event.id, $event)" /><span>{{ event.title }}</span><small>{{ event.startsAt | date:'d MMM' }}</small></label>
+            } @empty { <p class="no-records">No events available to assign.</p> }
+          </section>
+
+          <section class="profile-section assignment-section">
+            <h3>Project assignments</h3>
+            @for (project of community.projects(); track project.id) {
+              <label class="assignment-row"><input type="checkbox" [checked]="volunteer.assignedProjectIds.includes(project.id)" [disabled]="!volunteer.active" (change)="toggleAssignment(volunteer, 'project', project.id, $event)" /><span>{{ project.title }}</span><small>{{ project.status }}</small></label>
+            } @empty { <p class="no-records">No projects available to assign.</p> }
+          </section>
+
+          <section class="profile-section">
+            <h3>Recent volunteer activity</h3>
+            @if (historyFor(volunteer).length) {
+              <div class="history-list">@for (activity of historyFor(volunteer).slice(0, 4); track activity.id) { <div><span class="history-dot"></span><span><strong>{{ activity.description }}</strong><small>{{ formatDate(activity.createdAt) }}</small></span></div> }</div>
+            } @else { <p class="no-records">No volunteer activity recorded yet.</p> }
+          </section>
+          <footer class="profile-actions"><button class="remove-button" type="button" (click)="pendingDelete.set(volunteer)">Remove volunteer</button><button class="primary-action" type="button" (click)="openEditForm(volunteer); selectedVolunteer.set(null)">Edit profile</button></footer>
+        </section>
+      </div>
+    }
+  }
+
+  <app-confirm-dialog [open]="pendingDelete() !== null" title="Remove this volunteer?" [message]="pendingDeleteMessage()" confirmLabel="Remove volunteer" [destructive]="true" (confirmed)="removeVolunteer()" (cancelled)="pendingDelete.set(null)" />
+</section>

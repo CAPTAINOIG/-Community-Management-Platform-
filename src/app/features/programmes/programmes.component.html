@@ -1,0 +1,85 @@
+<section class="programmes-page">
+  <div class="page-heading"><div><span class="eyebrow">LEARNING & DEVELOPMENT</span><h1>Empowerment programmes</h1><p>Build skills, open opportunities, and follow every participant’s journey.</p></div><button class="primary-action" type="button" (click)="openCreateForm()"><span aria-hidden="true">+</span> Create programme</button></div>
+
+  <div class="summary-grid">
+    <div class="summary-card"><span class="summary-icon green"><ng-icon name="lucideBookOpenCheck" size="17" /></span><span><strong>{{ community.programmes().length }}</strong><small>Total programmes</small></span></div>
+    <div class="summary-card"><span class="summary-icon blue"><span class="status-dot open"></span></span><span><strong>{{ openCount() }}</strong><small>Open for applications</small></span></div>
+    <div class="summary-card"><span class="summary-icon violet"><ng-icon name="lucideUsers" size="17" /></span><span><strong>{{ participantCount() }}</strong><small>Enrolled participants</small></span></div>
+    <div class="summary-card"><span class="summary-icon amber"><ng-icon name="lucideActivity" size="17" /></span><span><strong>{{ pendingCount() }}</strong><small>Applications to review</small></span></div>
+  </div>
+
+  <section class="programmes-panel">
+    <header class="panel-heading">
+      <div><h2>Programmes <span>{{ visibleProgrammes().length }}</span></h2><p>Training, skills development, and community empowerment.</p></div>
+      <div class="filter-tabs">
+        <button type="button" [class.active]="statusFilter() === 'All'" (click)="setStatusFilter('All')">All</button>
+        <button type="button" [class.active]="statusFilter() === 'Open'" (click)="setStatusFilter('Open')">Open</button>
+        <button type="button" [class.active]="statusFilter() === 'In progress'" (click)="setStatusFilter('In progress')">In progress</button>
+        <button type="button" [class.active]="statusFilter() === 'Completed'" (click)="setStatusFilter('Completed')">Completed</button>
+      </div>
+    </header>
+    @if (visibleProgrammes().length) {
+      <div class="programme-grid">
+        @for (programme of visibleProgrammes(); track programme.id) {
+          <article class="programme-card">
+            <div class="programme-card-top"><span class="category-label">{{ programme.category }}</span><span class="programme-status" [class]="programme.status.toLowerCase().replace(' ', '-')">{{ programme.status }}</span></div>
+            <h3>{{ programme.title }}</h3>
+            <div class="programme-dates"><ng-icon name="lucideCalendarDays" size="14" /> {{ formatDate(programme.startsAt) }} – {{ formatDate(programme.endsAt) }}</div>
+            <div class="participant-row"><span>Participants</span><strong>{{ programme.participantMemberIds.length }} <small>/ {{ programme.capacity }}</small></strong></div>
+            <div class="participant-progress" role="progressbar" [attr.aria-valuenow]="participantPercent(programme)" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="participantPercent(programme)"></span></div>
+            <div class="application-count">{{ applicationCount(programme) }} application{{ applicationCount(programme) === 1 ? '' : 's' }} · {{ programme.capacity - programme.participantMemberIds.length }} places available</div>
+            <div class="programme-actions">
+              <button class="text-button" type="button" (click)="selectedProgrammeId.set(programme.id)">Applications</button>
+              @if (programme.status !== 'Completed') { <button class="text-button apply-button" type="button" (click)="applyingProgramme.set(programme)">Apply member</button> }
+              <button class="icon-action" type="button" [attr.aria-label]="'Edit ' + programme.title" (click)="openEditForm(programme)">Edit</button>
+              <button class="icon-action delete" type="button" [attr.aria-label]="'Delete ' + programme.title" (click)="pendingDelete.set(programme)">Delete</button>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty-state"><span class="empty-icon"><ng-icon name="lucideBookOpenCheck" size="21" /></span><strong>{{ community.programmes().length ? 'No programmes in this status' : 'Start a learning programme' }}</strong><p>{{ community.programmes().length ? 'Choose another status to see your programmes.' : 'Create a skills or empowerment opportunity for your members.' }}</p>@if (!community.programmes().length) { <button class="primary-action" type="button" (click)="openCreateForm()">Create programme</button> }</div>
+    }
+  </section>
+
+  <section class="applications-panel">
+    <header class="panel-heading application-heading">
+      <div><h2>Programme applications <span>{{ visibleApplications().length }}</span></h2><p>Review applications and track participant completion.</p></div>
+      <label class="visually-hidden" for="application-programme-filter">Filter applications by programme</label>
+      <select id="application-programme-filter" [value]="selectedProgrammeId()" (change)="setApplicationFilter($event)"><option value="">All programmes</option>@for (programme of community.programmes(); track programme.id) { <option [value]="programme.id">{{ programme.title }}</option> }</select>
+    </header>
+    @if (visibleApplications().length) {
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>APPLICANT</th><th>PROGRAMME</th><th>APPLIED</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+          <tbody>
+            @for (row of visibleApplications(); track row.application.id) {
+              <tr>
+                <td><strong class="applicant-name">{{ row.memberName }}</strong></td>
+                <td>{{ row.programmeName }}</td>
+                <td>{{ formatDate(row.application.appliedAt) }}</td>
+                <td><span class="application-status" [class]="row.application.status.toLowerCase()">{{ row.application.status }}</span></td>
+                <td>
+                  <div class="application-actions">
+                    @if (row.application.status === 'Pending') {
+                      <button class="approve-button" type="button" (click)="changeApplicationStatus(row.application, 'Approved')">Approve</button>
+                      <button class="reject-button" type="button" (click)="changeApplicationStatus(row.application, 'Rejected')">Decline</button>
+                    } @else if (row.application.status === 'Approved') {
+                      <button class="approve-button" type="button" (click)="changeApplicationStatus(row.application, 'Completed')">Mark completed</button>
+                    } @else { <span class="no-action">—</span> }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="application-empty">No applications to display for this programme yet.</div>
+    }
+  </section>
+
+  @if (formOpen()) { <app-programme-form-dialog [programme]="editingProgramme()" (saved)="saveProgramme($event)" (cancelled)="formOpen.set(false); editingProgramme.set(null)" /> }
+  @if (applyingProgramme(); as programme) { <app-application-dialog [programme]="programme" [availableMembers]="activeMembersForApplication()" (applied)="applyMember($event)" (cancelled)="applyingProgramme.set(null)" /> }
+  <app-confirm-dialog [open]="pendingDelete() !== null" title="Delete this programme?" [message]="pendingDeleteMessage()" confirmLabel="Delete programme" [destructive]="true" (confirmed)="deleteProgramme()" (cancelled)="pendingDelete.set(null)" />
+</section>

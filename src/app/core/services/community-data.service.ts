@@ -4,9 +4,14 @@ import {
   CommunityEvent,
   CommunityProject,
   DashboardMetrics,
+  EmpowermentProgramme,
   EventDraft,
   MemberDraft,
   Member,
+  ProgrammeApplication,
+  ProgrammeApplicationStatus,
+  ProgrammeDraft,
+  VolunteerDraft,
   Volunteer,
 } from '../models/community.models';
 
@@ -37,6 +42,16 @@ function createDemoData(): CommunityData {
     { id: 'm-1012', fullName: 'Samuel Adeyemi', email: 'samuel.adeyemi@example.org', phone: '+44 7700 900112', address: '19 Hillcrest Road, Bristol', registeredAt: daysAgo(346), skills: ['Music', 'Youth work'], interests: ['Arts and culture'], status: 'Active', group: 'Creative Circle' },
   ];
 
+  const applications: ProgrammeApplication[] = [
+    { id: 'app-701', programmeId: 'p-401', memberId: 'm-1002', appliedAt: daysAgo(35), status: 'Approved' },
+    { id: 'app-702', programmeId: 'p-401', memberId: 'm-1006', appliedAt: daysAgo(26), status: 'Approved' },
+    { id: 'app-703', programmeId: 'p-401', memberId: 'm-1010', appliedAt: daysAgo(18), status: 'Approved' },
+    { id: 'app-704', programmeId: 'p-401', memberId: 'm-1004', appliedAt: daysAgo(6), status: 'Pending' },
+    { id: 'app-705', programmeId: 'p-402', memberId: 'm-1003', appliedAt: daysAgo(2), status: 'Pending' },
+    { id: 'app-706', programmeId: 'p-402', memberId: 'm-1009', appliedAt: daysAgo(1), status: 'Approved' },
+    { id: 'app-707', programmeId: 'p-403', memberId: 'm-1005', appliedAt: daysAgo(100), status: 'Completed' },
+  ];
+
   const events: CommunityEvent[] = [
     { id: 'e-201', title: 'Community Garden Open Day', description: 'A friendly day to plant, share skills and meet neighbours.', venue: 'Eastside Community Garden', startsAt: daysFromToday(2), endsAt: daysFromToday(2), capacity: 40, registeredMemberIds: ['m-1001', 'm-1003', 'm-1005', 'm-1007', 'm-1009', 'm-1012'], attendedMemberIds: [] },
     { id: 'e-202', title: 'Digital Skills Drop-in', description: 'Practical support with everyday digital skills and devices.', venue: 'Barton Library', startsAt: daysFromToday(5), endsAt: daysFromToday(5), capacity: 24, registeredMemberIds: ['m-1002', 'm-1004', 'm-1006', 'm-1010'], attendedMemberIds: [] },
@@ -45,11 +60,11 @@ function createDemoData(): CommunityData {
   ];
 
   const volunteers: Volunteer[] = [
-    { id: 'v-301', memberId: 'm-1001', skills: ['Community organising', 'Public speaking'], availability: 'Weekends', hoursContributed: 28, active: true },
-    { id: 'v-302', memberId: 'm-1003', skills: ['First aid', 'Event planning'], availability: 'Weekday evenings', hoursContributed: 16, active: true },
-    { id: 'v-303', memberId: 'm-1005', skills: ['Cooking'], availability: 'Flexible', hoursContributed: 42, active: true },
-    { id: 'v-304', memberId: 'm-1008', skills: ['Coaching', 'First aid'], availability: 'Saturday mornings', hoursContributed: 21, active: true },
-    { id: 'v-305', memberId: 'm-1009', skills: ['Accounting'], availability: 'Weekday evenings', hoursContributed: 9, active: false },
+    { id: 'v-301', memberId: 'm-1001', skills: ['Community organising', 'Public speaking'], availability: 'Weekends', hoursContributed: 28, active: true, assignedEventIds: ['e-201'], assignedProjectIds: ['pr-502'] },
+    { id: 'v-302', memberId: 'm-1003', skills: ['First aid', 'Event planning'], availability: 'Weekday evenings', hoursContributed: 16, active: true, assignedEventIds: ['e-203'], assignedProjectIds: [] },
+    { id: 'v-303', memberId: 'm-1005', skills: ['Cooking'], availability: 'Flexible', hoursContributed: 42, active: true, assignedEventIds: ['e-201'], assignedProjectIds: ['pr-501'] },
+    { id: 'v-304', memberId: 'm-1008', skills: ['Coaching', 'First aid'], availability: 'Saturday mornings', hoursContributed: 21, active: true, assignedEventIds: [], assignedProjectIds: ['pr-502'] },
+    { id: 'v-305', memberId: 'm-1009', skills: ['Accounting'], availability: 'Weekday evenings', hoursContributed: 9, active: false, assignedEventIds: [], assignedProjectIds: [] },
   ];
 
   const programmes: CommunityData['programmes'] = [
@@ -72,7 +87,7 @@ function createDemoData(): CommunityData {
     { id: 'a-605', description: 'recorded a new project milestone', createdAt: daysAgo(4), kind: 'project', actor: 'Daniel Mensah' },
   ];
 
-  return { members, events, volunteers, programmes, projects, activities };
+  return { members, events, volunteers, programmes, applications, projects, activities };
 }
 
 function hasCommunityData(value: unknown): value is CommunityData {
@@ -89,7 +104,19 @@ function loadInitialData(): CommunityData {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return createDemoData();
     const parsed: unknown = JSON.parse(saved);
-    if (hasCommunityData(parsed)) return parsed;
+    if (hasCommunityData(parsed)) {
+      return {
+        ...parsed,
+        volunteers: parsed.volunteers.map((volunteer) => ({
+          ...volunteer,
+          assignedEventIds: Array.isArray(volunteer.assignedEventIds) ? volunteer.assignedEventIds : [],
+          assignedProjectIds: Array.isArray(volunteer.assignedProjectIds) ? volunteer.assignedProjectIds : [],
+        })),
+        applications: Array.isArray((parsed as Partial<CommunityData>).applications)
+          ? (parsed as CommunityData).applications
+          : [],
+      };
+    }
     console.warn('CommunityHub demo data was invalid; loading fresh demo records.');
   } catch (error) {
     console.warn('CommunityHub could not load saved demo data; loading fresh demo records.', error);
@@ -106,6 +133,7 @@ export class CommunityDataService {
   readonly events = computed(() => this.dataState().events);
   readonly volunteers = computed(() => this.dataState().volunteers);
   readonly programmes = computed(() => this.dataState().programmes);
+  readonly applications = computed(() => this.dataState().applications);
   readonly projects = computed(() => this.dataState().projects);
   readonly activities = computed(() => this.dataState().activities);
 
@@ -162,6 +190,8 @@ export class CommunityDataService {
       registered: event.registeredMemberIds.length,
       attended: event.attendedMemberIds.length,
     })));
+  readonly totalVolunteerHours = computed(() => this.volunteers()
+    .reduce((total, volunteer) => total + volunteer.hoursContributed, 0));
 
   constructor() {
     effect(() => this.persist(this.dataState()));
@@ -243,6 +273,203 @@ export class CommunityDataService {
     }));
   }
 
+  addProgramme(details: ProgrammeDraft): EmpowermentProgramme {
+    this.validateProgrammeDraft(details);
+    const nextId = Math.max(400, ...this.programmes().map((programme) => Number(programme.id.replace('p-', '')) || 0)) + 1;
+    const programme: EmpowermentProgramme = {
+      ...this.cleanProgrammeDraft(details),
+      id: `p-${nextId}`,
+      participantMemberIds: [],
+    };
+    this.dataState.update((data) => ({
+      ...data,
+      programmes: [programme, ...data.programmes],
+    }));
+    return programme;
+  }
+
+  updateProgramme(id: string, details: ProgrammeDraft): EmpowermentProgramme {
+    const current = this.programmes().find((programme) => programme.id === id);
+    if (!current) throw new Error('The programme could not be found.');
+    this.validateProgrammeDraft(details);
+    if (details.capacity < current.participantMemberIds.length) {
+      throw new Error('Capacity cannot be lower than the number of confirmed participants.');
+    }
+    const updated = { ...current, ...this.cleanProgrammeDraft(details) };
+    this.dataState.update((data) => ({
+      ...data,
+      programmes: data.programmes.map((programme) => programme.id === id ? updated : programme),
+    }));
+    return updated;
+  }
+
+  deleteProgramme(id: string): void {
+    if (!this.programmes().some((programme) => programme.id === id)) throw new Error('The programme could not be found.');
+    this.dataState.update((data) => ({
+      ...data,
+      programmes: data.programmes.filter((programme) => programme.id !== id),
+      applications: data.applications.filter((application) => application.programmeId !== id),
+    }));
+  }
+
+  applyToProgramme(programmeId: string, memberId: string): ProgrammeApplication {
+    const programme = this.programmes().find((item) => item.id === programmeId);
+    const member = this.getMember(memberId);
+    if (!programme) throw new Error('The programme could not be found.');
+    if (!member || member.status !== 'Active') throw new Error('Only active community members can apply.');
+    if (programme.status === 'Completed') throw new Error('Applications are closed for this programme.');
+    if (this.applications().some((application) => application.programmeId === programmeId && application.memberId === memberId)) {
+      throw new Error('This member already has an application for the programme.');
+    }
+
+    const nextId = Math.max(700, ...this.applications().map((application) => Number(application.id.replace('app-', '')) || 0)) + 1;
+    const application: ProgrammeApplication = {
+      id: `app-${nextId}`,
+      programmeId,
+      memberId,
+      appliedAt: new Date().toISOString(),
+      status: 'Pending',
+    };
+    this.dataState.update((data) => ({ ...data, applications: [application, ...data.applications] }));
+    return application;
+  }
+
+  updateApplicationStatus(id: string, status: ProgrammeApplicationStatus): ProgrammeApplication {
+    const application = this.applications().find((item) => item.id === id);
+    if (!application) throw new Error('The programme application could not be found.');
+    const programme = this.programmes().find((item) => item.id === application.programmeId);
+    if (!programme) throw new Error('The application programme could not be found.');
+    if ((status === 'Approved' || status === 'Completed')
+      && !programme.participantMemberIds.includes(application.memberId)
+      && programme.participantMemberIds.length >= programme.capacity) {
+      throw new Error('This programme has reached capacity.');
+    }
+
+    const updated: ProgrammeApplication = { ...application, status };
+    const participantMemberIds = status === 'Approved' || status === 'Completed'
+      ? [...new Set([...programme.participantMemberIds, application.memberId])]
+      : programme.participantMemberIds.filter((memberId) => memberId !== application.memberId);
+    this.dataState.update((data) => ({
+      ...data,
+      applications: data.applications.map((item) => item.id === id ? updated : item),
+      programmes: data.programmes.map((item) => item.id === programme.id
+        ? { ...item, participantMemberIds }
+        : item),
+    }));
+    return updated;
+  }
+
+  addVolunteer(memberId: string, details: VolunteerDraft): Volunteer {
+    const member = this.getMember(memberId);
+    if (!member) throw new Error('Choose a member from the directory.');
+    if (member.status !== 'Active') throw new Error('Only active members can be registered as volunteers.');
+    if (this.volunteers().some((volunteer) => volunteer.memberId === memberId)) {
+      throw new Error('This member is already registered as a volunteer.');
+    }
+
+    const nextId = Math.max(300, ...this.volunteers().map((volunteer) => Number(volunteer.id.replace('v-', '')) || 0)) + 1;
+    const volunteer: Volunteer = {
+      ...details,
+      id: `v-${nextId}`,
+      memberId,
+      skills: details.skills.map((skill) => skill.trim()).filter(Boolean),
+      availability: details.availability.trim(),
+      hoursContributed: 0,
+      assignedEventIds: [],
+      assignedProjectIds: [],
+    };
+    this.dataState.update((data) => ({
+      ...data,
+      volunteers: [volunteer, ...data.volunteers],
+      activities: [{
+        id: `a-${Date.now()}`,
+        description: 'joined the volunteer team',
+        createdAt: new Date().toISOString(),
+        kind: 'volunteer',
+        actor: member.fullName,
+      }, ...data.activities],
+    }));
+    return volunteer;
+  }
+
+  updateVolunteer(id: string, details: VolunteerDraft): Volunteer {
+    const existing = this.volunteers().find((volunteer) => volunteer.id === id);
+    if (!existing) throw new Error('The volunteer could not be found.');
+    const updated: Volunteer = {
+      ...existing,
+      ...details,
+      skills: details.skills.map((skill) => skill.trim()).filter(Boolean),
+      availability: details.availability.trim(),
+      assignedEventIds: details.active ? existing.assignedEventIds : [],
+      assignedProjectIds: details.active ? existing.assignedProjectIds : [],
+    };
+    this.dataState.update((data) => ({
+      ...data,
+      volunteers: data.volunteers.map((volunteer) => volunteer.id === id ? updated : volunteer),
+    }));
+    return updated;
+  }
+
+  deleteVolunteer(id: string): void {
+    const volunteer = this.volunteers().find((item) => item.id === id);
+    if (!volunteer) throw new Error('The volunteer could not be found.');
+    this.dataState.update((data) => ({
+      ...data,
+      volunteers: data.volunteers.filter((item) => item.id !== id),
+    }));
+  }
+
+  recordVolunteerHours(id: string, hours: number): void {
+    if (!Number.isInteger(hours) || hours < 1 || hours > 24) {
+      throw new Error('Enter a whole number of hours between 1 and 24.');
+    }
+    const volunteer = this.volunteers().find((item) => item.id === id);
+    if (!volunteer) throw new Error('The volunteer could not be found.');
+    if (!volunteer.active) throw new Error('Only active volunteers can record new hours.');
+    const name = this.getVolunteerName(volunteer);
+    this.dataState.update((data) => ({
+      ...data,
+      volunteers: data.volunteers.map((item) => item.id === id
+        ? { ...item, hoursContributed: item.hoursContributed + hours }
+        : item),
+      activities: [{
+        id: `a-${Date.now()}`,
+        description: `contributed ${hours} volunteer hour${hours === 1 ? '' : 's'}`,
+        createdAt: new Date().toISOString(),
+        kind: 'volunteer',
+        actor: name,
+      }, ...data.activities],
+    }));
+  }
+
+  setVolunteerAssignment(
+    volunteerId: string,
+    assignmentType: 'event' | 'project',
+    assignmentId: string,
+    assigned: boolean,
+  ): void {
+    const volunteer = this.volunteers().find((item) => item.id === volunteerId);
+    if (!volunteer) throw new Error('The volunteer could not be found.');
+    if (!volunteer.active) throw new Error('Only active volunteers can receive assignments.');
+    const targetExists = assignmentType === 'event'
+      ? this.events().some((event) => event.id === assignmentId)
+      : this.projects().some((project) => project.id === assignmentId);
+    if (!targetExists) throw new Error(`The ${assignmentType} could not be found.`);
+
+    this.dataState.update((data) => ({
+      ...data,
+      volunteers: data.volunteers.map((item) => {
+        if (item.id !== volunteerId) return item;
+        const field = assignmentType === 'event' ? 'assignedEventIds' : 'assignedProjectIds';
+        const assignments = item[field];
+        const updatedAssignments = assigned
+          ? [...new Set([...assignments, assignmentId])]
+          : assignments.filter((id) => id !== assignmentId);
+        return { ...item, [field]: updatedAssignments };
+      }),
+    }));
+  }
+
   addEvent(details: EventDraft): CommunityEvent {
     this.validateEventDraft(details);
     const nextId = Math.max(
@@ -290,6 +517,10 @@ export class CommunityDataService {
     this.dataState.update((data) => ({
       ...data,
       events: data.events.filter((item) => item.id !== id),
+      volunteers: data.volunteers.map((volunteer) => ({
+        ...volunteer,
+        assignedEventIds: volunteer.assignedEventIds.filter((eventId) => eventId !== id),
+      })),
     }));
   }
 
@@ -358,6 +589,23 @@ export class CommunityDataService {
       title: details.title.trim(),
       description: details.description.trim(),
       venue: details.venue.trim(),
+    };
+  }
+
+  private validateProgrammeDraft(details: ProgrammeDraft): void {
+    const startsAt = new Date(details.startsAt).getTime();
+    const endsAt = new Date(details.endsAt).getTime();
+    if (!details.title.trim() || !details.category.trim()) throw new Error('Programme title and category are required.');
+    if (!Number.isFinite(startsAt) || !Number.isFinite(endsAt)) throw new Error('Enter valid programme dates.');
+    if (endsAt < startsAt) throw new Error('The programme end date must be after its start date.');
+    if (!Number.isInteger(details.capacity) || details.capacity < 1) throw new Error('Programme capacity must be at least 1.');
+  }
+
+  private cleanProgrammeDraft(details: ProgrammeDraft): ProgrammeDraft {
+    return {
+      ...details,
+      title: details.title.trim(),
+      category: details.category.trim(),
     };
   }
 

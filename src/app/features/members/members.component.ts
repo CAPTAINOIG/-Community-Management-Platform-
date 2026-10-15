@@ -29,7 +29,7 @@ export class MembersComponent {
   readonly sortField = signal<MemberSortField>('registeredAt');
   readonly sortAscending = signal(false);
   readonly currentPage = signal(1);
-  readonly pageSize = 8;
+  readonly pageSize = 6;
   readonly formOpen = signal(false);
   readonly editingMember = signal<Member | null>(null);
   readonly profileMember = signal<Member | null>(null);
@@ -85,8 +85,8 @@ export class MembersComponent {
     this.currentPage.set(1);
   }
 
-  setStatus(event: Event): void {
-    this.statusFilter.set((event.target as HTMLSelectElement).value as 'All' | MemberStatus);
+  filterByStatus(status: 'All' | MemberStatus): void {
+    this.statusFilter.set(status);
     this.currentPage.set(1);
   }
 

@@ -64,3 +64,13 @@
 .toast button:hover {
   background: #f3f6f4;
 }
+
+.toast-stack { right: 24px; bottom: 24px; width: min(390px, calc(100vw - 32px)); gap: 10px; }
+.toast { min-height: 56px; gap: 12px; padding: 12px 13px; border-color: #e1e9e4; border-radius: 12px; box-shadow: 0 12px 30px rgb(24 49 38 / 14%); font-size: 12px; }
+.toast-icon { width: 30px; height: 30px; }
+.toast > span:nth-child(2) { line-height: 1.5; }
+.toast button { width: 30px; height: 30px; border-radius: 8px; }
+
+@media (max-width: 520px) {
+  .toast-stack { right: 16px; bottom: 16px; }
+}

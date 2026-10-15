@@ -825,3 +825,102 @@
     padding-inline: 9px;
   }
 }
+
+/* Calendar views share the workspace's card and type system */
+.events-page { gap: 22px; }
+.eyebrow, .event-detail-eyebrow { color: #76867d; font-size: 10px; letter-spacing: 1.2px; }
+.page-heading h1, .detail-heading h1, .not-found h1 { margin-top: 7px; font-size: 31px; letter-spacing: -1.1px; }
+.page-heading p, .detail-heading > div > p { margin-top: 7px; color: #718078; font-size: 13px; line-height: 1.5; }
+.primary-action, .secondary-action, .danger-action { min-height: 42px; gap: 8px; padding-inline: 15px; border-radius: 9px; font-size: 12px; }
+.primary-action { border-color: #304bd9; background: #3554e8; box-shadow: 0 3px 7px rgb(53 84 232 / 17%); }
+.primary-action:hover:not(:disabled) { background: #2c46d0; }
+.secondary-action { border-color: #dfe7e2; color: #465a4f; }
+.danger-action { border-color: #f0ddda; background: #fff; color: #ad5040; }
+.event-summary-grid, .event-overview-grid { gap: 14px; }
+.summary-card { min-height: 88px; gap: 14px; padding: 15px 17px; border-color: #e4eae6; border-radius: 13px; box-shadow: var(--shadow); }
+.summary-card:hover, .summary-card.selected { border-color: #a9cdb8; }
+.summary-card.selected { box-shadow: 0 0 0 3px rgb(22 118 83 / 7%); }
+.summary-card strong { font-size: 23px; }
+.summary-card small { font-size: 11px; }
+.summary-bullet { width: 40px; height: 40px; border-radius: 11px; }
+.summary-bullet:not(.all) { width: 9px; height: 9px; margin-inline: 15px; }
+.events-panel, .attendees-panel { border-color: #e4eae6; border-radius: 14px; box-shadow: var(--shadow); }
+.list-heading { padding: 21px 22px 16px; }
+.list-heading h2, .attendees-heading h2 { gap: 9px; font-size: 16px; }
+.list-heading h2 span, .attendees-heading h2 span { min-width: 25px; height: 22px; font-size: 10px; }
+.list-heading p, .attendees-heading p { margin-top: 6px; color: #718078; font-size: 11px; }
+.event-search { width: 270px; min-height: 40px; gap: 8px; padding-inline: 11px; border-color: #e0e7e3; border-radius: 8px; }
+.event-search input { font-size: 11px; }
+.event-cards { padding-inline: 22px; }
+.event-card { gap: 16px; padding: 19px 0; border-color: #edf1ee; }
+.event-card-date { width: 54px; height: 62px; border-radius: 10px; }
+.event-card-date strong { font-size: 19px; }
+.event-card-date small { font-size: 9px; }
+.event-card-date span { font-size: 8px; }
+.event-card-title { gap: 10px; }
+.event-card-title a { font-size: 13px; }
+.event-status { padding: 5px 8px; border-radius: 6px; font-size: 9px; }
+.event-card-content > p { margin: 7px 0 10px; color: #718078; font-size: 11px; }
+.event-card-meta { gap: 15px; font-size: 10px; }
+.capacity-info { gap: 10px; margin-top: 12px; font-size: 10px; }
+.capacity-bar { height: 6px; }
+.event-card-actions { gap: 5px; }
+.event-card-actions button { padding: 7px 8px; border-radius: 6px; font-size: 10px; }
+.events-empty, .attendees-empty, .not-found { padding: 52px 22px; }
+.events-empty > strong, .attendees-empty > strong { font-size: 14px; }
+.events-empty p, .attendees-empty p, .not-found p { margin: 7px 0 15px; font-size: 11px; }
+.back-link { margin-bottom: 15px; font-size: 11px; }
+.event-title-row h1 { font-size: 28px; }
+.detail-actions { gap: 9px; }
+.event-overview-card { gap: 12px; padding: 16px 14px; border-color: #e4eae6; border-radius: 12px; background: #fff; }
+.overview-icon { width: 40px; height: 40px; border-radius: 10px; }
+.event-overview-card > span:last-child { gap: 4px; }
+.event-overview-card small { font-size: 8px; letter-spacing: .65px; }
+.event-overview-card strong { font-size: 12px; }
+.event-overview-card em { font-size: 10px; }
+.attendees-heading { padding: 20px 22px; }
+.register-controls { gap: 9px; }
+.register-controls select { width: 220px; min-height: 42px; padding-inline: 10px; border-color: #e0e7e3; border-radius: 8px; font-size: 11px; }
+.attendee-table thead { background: #f8faf9; }
+.attendee-table th { height: 41px; padding-inline: 13px; border-color: #e9eeeb; font-size: 9px; }
+.attendee-table td { height: 66px; padding: 9px 13px; border-color: #edf1ee; font-size: 11px; }
+.attendee-avatar { width: 36px; height: 36px; font-size: 9px; }
+.attendee-identity { gap: 10px; }
+.attendee-identity strong { font-size: 11px; }
+.attendee-identity small { font-size: 9px; }
+.registered-tag, .not-started { font-size: 10px; }
+.attendance-toggle > span { width: 31px; height: 17px; }
+.attendance-toggle > span::before { width: 13px; height: 13px; }
+.attendance-toggle input:checked + span::before { transform: translateX(14px); }
+.attendance-toggle small { font-size: 10px; }
+
+@media (max-width: 980px) {
+  .event-summary-grid, .event-overview-grid { gap: 10px; }
+}
+
+@media (max-width: 680px) {
+  .events-page { gap: 16px; }
+  .page-heading h1, .detail-heading h1 { font-size: 26px; }
+  .page-heading p, .detail-heading > div > p { font-size: 11px; }
+  .page-heading > .primary-action { min-height: 36px; padding-inline: 10px; font-size: 10px; white-space: nowrap; }
+  .list-heading { padding: 16px 13px 13px; }
+  .event-search { min-height: 38px; }
+  .event-cards { padding-inline: 13px; }
+  .event-card { gap: 10px; padding-block: 15px; }
+  .event-card-date { width: 45px; height: 54px; }
+  .event-card-title a { font-size: 11px; }
+  .event-card-content > p { font-size: 10px; }
+  .event-card-meta { gap: 8px; font-size: 9px; }
+  .event-card-actions button { font-size: 9px; }
+  .attendees-heading { padding: 15px 13px; }
+  .register-controls select { min-height: 38px; }
+  .attendee-table { min-width: 720px; }
+  .detail-actions button { min-height: 36px; font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+  .event-summary-grid, .event-overview-grid { gap: 8px; }
+  .summary-card { min-height: 73px; gap: 7px; padding: 9px; }
+  .summary-card strong { font-size: 18px; }
+  .summary-card small { font-size: 9px; }
+}

@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "9a276215-f449-4cb9-8fbc-01ebbb1c07df"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -41,8 +42,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "11kB",
-                  "maximumError": "12kB"
+                  "maximumWarning": "15kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"

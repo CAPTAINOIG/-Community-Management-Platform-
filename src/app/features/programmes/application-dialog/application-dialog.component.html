@@ -1,0 +1,13 @@
+<div class="dialog-backdrop" role="presentation" (click)="cancelled.emit()">
+  <section class="application-dialog" role="dialog" aria-modal="true" aria-label="Submit programme application" (click)="$event.stopPropagation()">
+    <header class="dialog-header"><div><span class="dialog-kicker">PROGRAMME APPLICATION</span><h2>Apply a member</h2><p>{{ programme?.title }}</p></div><button class="close-button" type="button" aria-label="Close form" (click)="cancelled.emit()"><ng-icon name="lucideX" size="18" /></button></header>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label class="form-field"><span>Community member <b>*</b></span>
+        <select formControlName="memberId"><option value="">Choose an active member</option>@for (member of availableMembers; track member.id) { <option [value]="member.id">{{ member.fullName }} · {{ member.group }}</option> }</select>
+        @if (submitted && form.controls.memberId.invalid) { <small class="field-error">Choose a member before submitting.</small> }
+        @if (!availableMembers.length) { <small class="field-hint">No eligible members are available for this programme.</small> }
+      </label>
+      <footer class="dialog-actions"><button class="secondary-button" type="button" (click)="cancelled.emit()">Cancel</button><button class="submit-button" type="submit" [disabled]="!availableMembers.length"><ng-icon name="lucideCheck" size="15" /> Submit application</button></footer>
+    </form>
+  </section>
+</div>
